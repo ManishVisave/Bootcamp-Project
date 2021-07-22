@@ -1,0 +1,41 @@
+version: '3.8'
+
+services: 
+  mysqldb:
+    image: mysql/mysql-server:latest
+    restart: always
+    env_file: ./.env
+    environment:
+      MYSQL_DATABASE: $MYSQL_DATABASE
+    command: --default-authentication-plugin=mysql_native_password
+    ports:
+      - $MYSQL_LOCAL_PORT:$MYSQL_DOCKER_PORT
+    volumes: 
+      - db-config:/etc/mysql
+      - db-data:/var/lib/mysql
+      - ./db/backup/files/:/data_backup/data
+    networks: 
+      - overlay
+  app:
+    build:
+        context: ./backend
+        dockerfile: ./Dockerfile
+    restart: always
+    depends_on:
+        - mysqldb
+    stdin_open: true
+    tty: true
+    networks: 
+      - overlay
+    ports:
+      - "8888:8888"
+    volumes:
+      - "./backend/app.js:/home/app/backend/app.js"
+      - "./backend/db.js:/home/app/backend/db.js"
+      
+volumes: 
+  db-config:
+  db-data:
+
+networks: 
+    overlay:
