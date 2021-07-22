@@ -33,6 +33,34 @@ getAllData = function(){
       )}
 )}
 
+insertRecord = (data) => {
+    // console.log(data)
+    return new Promise((resolve,reject)=>{
+        con.query('INSERT INTO demo SET ?',data,(err,data)=>{
+            if(data === undefined){
+                reject(new Error(err))
+            }else{
+                resolve(data)
+            }
+        })
+    })
+    
+}
+
+deleteRecord = (id) => {
+    return new Promise((resolve,reject)=>{
+        con.query('DELETE FROM demo WHERE id = ?',id,(err,data)=>{
+            if(data === undefined){
+                reject(new Error(err))
+            }else{
+                resolve(data)
+            }
+        })
+    })
+}
+
 exports.con = con;
 exports.addData = addData;
 exports.retriveData = getAllData;
+exports.insertRecord = insertRecord
+exports.deleteRecord = deleteRecord

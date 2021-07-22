@@ -17,18 +17,23 @@ app.get("/",(req,res)=>{
   res.send("Server Listening.....")
 })
 
-app.post("/add",(req,res)=>{
-  res.send("Add Called")
+app.post("/add",async (req,res)=>{
+  // console.log(req.body)
+  await db.insertRecord(req.body).then(result => {
+    res.json('Record added')
+  }).catch(err=>console.log(err))
 })
 
 app.get("/getAll",async (req,res)=>{
-  db.retriveData().then(result => {
+  await db.retriveData().then(result => {
     res.json(result)
   }).catch(err => console.log(err))
 })
 
-app.delete('/delete/:propertyid', (req,res) => {
-  res.json("Delete Called")
+app.delete('/delete/:propertyid', async (req,res) => {
+  await db.deleteRecord(req.params.propertyid).then(result => {
+    res.json(result)
+  }).catch(err => console.log(err))
 })
 
 app.listen(8888,(req,res)=>{
