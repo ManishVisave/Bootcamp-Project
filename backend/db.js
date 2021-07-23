@@ -56,7 +56,6 @@ deleteRecord = (id) => {
 }
 
 exports.con = con;
-exports.addData = addData;
 exports.retriveData = getAllData;
 exports.insertRecord = insertRecord
 exports.deleteRecord = deleteRecord
