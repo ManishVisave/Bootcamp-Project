@@ -18,7 +18,10 @@
 --
 -- Table structure for table `city`
 --
-
+/*CREATE USER 'test'@'%' IDENTIFIED WITH mysql_native_password by 'test@123';
+GRANT ALL ON *.* TO 'test';*/
+CREATE DATABASE property;
+USE property;
 DROP TABLE IF EXISTS `city`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;

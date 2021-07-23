@@ -2,18 +2,23 @@ version: '3.8'
 
 services: 
   mysqldb:
-    image: mysql/mysql-server:latest
+    image: mysql
     restart: always
     env_file: ./.env
     environment:
-      MYSQL_DATABASE: $MYSQL_DATABASE
-    command: --default-authentication-plugin=mysql_native_password
+      MYSQL_DATABASE: "test"
+      MYSQL_ROOT_PASSWORD: password
+    #command: --init-file /home/init.sql
+    #command: --default-authentication-plugin=mysql_native_password
     ports:
-      - $MYSQL_LOCAL_PORT:$MYSQL_DOCKER_PORT
+      - "3306:3306"
     volumes: 
       - db-config:/etc/mysql
       - db-data:/var/lib/mysql
       - ./db/backup/files/:/data_backup/data
+      - ./dumps:/docker-entrypoint-initdb.d
+      #- ./property.sql:/home/property.sql
+      #- ./property.sql:/home/init.sql
     networks: 
       - overlay
   app:
@@ -32,6 +37,7 @@ services:
     volumes:
       - "./backend/app.js:/home/app/backend/app.js"
       - "./backend/db.js:/home/app/backend/db.js"
+
       
 volumes: 
   db-config:
