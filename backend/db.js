@@ -14,16 +14,12 @@ con.connect(function(err) {
 });
 
 
-function addData(data){
-
-}
-
 
 getAllData = function(){
     return new Promise(function(resolve, reject){
       con.query(
-          "SELECT * FROM demo", 
-          function(err, rows){                                                
+          "SELECT * FROM demo",
+          function(err, rows){
               if(rows === undefined){
                   reject(new Error("Error rows is undefined"));
               }else{
@@ -44,7 +40,7 @@ insertRecord = (data) => {
             }
         })
     })
-    
+
 }
 
 deleteRecord = (id) => {

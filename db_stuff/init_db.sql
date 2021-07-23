@@ -1,4 +1,0 @@
-CREATE DATABASE IF NOT EXISTS test;
-GRANT ALL PRIVILEGES on test.*
-TO 'awesomeness'@'%' IDENTIFIED BY 'lamepassword'
-WITH GRANT OPTION;
