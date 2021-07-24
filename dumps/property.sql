@@ -18,10 +18,7 @@
 --
 -- Table structure for table `city`
 --
-/*CREATE USER 'test'@'%' IDENTIFIED WITH mysql_native_password by 'test@123';
-GRANT ALL ON *.* TO 'test';*/
-CREATE DATABASE property;
-USE property;
+
 DROP TABLE IF EXISTS `city`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
@@ -31,7 +28,7 @@ CREATE TABLE `city` (
   `city_name` varchar(255) NOT NULL,
   PRIMARY KEY (`city_id`),
   KEY `country_id` (`country_id`),
-  CONSTRAINT `city_ibfk_1` FOREIGN KEY (`country_id`) REFERENCES `country` (`country_id`)
+  CONSTRAINT `city_ibfk_1` FOREIGN KEY (`country_id`) REFERENCES `country` (`country_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -104,7 +101,7 @@ CREATE TABLE `locality` (
   `location_pin` int NOT NULL,
   PRIMARY KEY (`location_id`),
   KEY `city_id` (`city_id`),
-  CONSTRAINT `locality_ibfk_1` FOREIGN KEY (`city_id`) REFERENCES `city` (`city_id`)
+  CONSTRAINT `locality_ibfk_1` FOREIGN KEY (`city_id`) REFERENCES `city` (`city_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -128,7 +125,7 @@ CREATE TABLE `photo` (
   `property_id` int DEFAULT NULL,
   `photo` varchar(255) NOT NULL,
   KEY `property_id` (`property_id`),
-  CONSTRAINT `photo_ibfk_1` FOREIGN KEY (`property_id`) REFERENCES `property` (`property_id`)
+  CONSTRAINT `photo_ibfk_1` FOREIGN KEY (`property_id`) REFERENCES `property` (`property_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -161,8 +158,8 @@ CREATE TABLE `property` (
   PRIMARY KEY (`property_id`),
   KEY `currency_id` (`currency_id`),
   KEY `location_id` (`location_id`),
-  CONSTRAINT `property_ibfk_1` FOREIGN KEY (`currency_id`) REFERENCES `currency` (`currency_id`),
-  CONSTRAINT `property_ibfk_2` FOREIGN KEY (`location_id`) REFERENCES `locality` (`location_id`)
+  CONSTRAINT `property_ibfk_3` FOREIGN KEY (`currency_id`) REFERENCES `currency` (`currency_id`) ON DELETE CASCADE,
+  CONSTRAINT `property_ibfk_4` FOREIGN KEY (`location_id`) REFERENCES `locality` (`location_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -184,4 +181,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-07-22  6:08:56
+-- Dump completed on 2021-07-24  2:16:56
