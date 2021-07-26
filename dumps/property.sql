@@ -18,10 +18,7 @@
 --
 -- Table structure for table `city`
 --
-CREATE USER 'test'@'%' IDENTIFIED WITH mysql_native_password by 'test@123';
-GRANT ALL ON *.* TO 'test';
-CREATE DATABASE property;
-USE property;
+
 DROP TABLE IF EXISTS `city`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
@@ -158,6 +155,7 @@ CREATE TABLE `property` (
   `area` decimal(12,2) DEFAULT NULL,
   `price` decimal(9,2) DEFAULT NULL,
   `description` varchar(500) DEFAULT NULL,
+  `user_id` int NOT NULL,
   PRIMARY KEY (`property_id`),
   KEY `currency_id` (`currency_id`),
   KEY `location_id` (`location_id`),
@@ -184,4 +182,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-07-24  2:16:56
+-- Dump completed on 2021-07-26  5:41:25
