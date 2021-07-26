@@ -21,8 +21,8 @@ process.env.SECRET_KEY="thisismysecretkey";
 //route to handle login and registration 
 app.post('/api/register',registerController.register);
 app.post('/api/authenticate',authenticateController.authenticate);
-app.post('/api/delete',deleteController.delete);
-app.post('/api/change',changeController.change);
+app.post('/secure-api/delete',deleteController.delete);
+app.post('/secure-api/change',changeController.change);
 
 app.use('/secure-api',router);
 // validation middleware
