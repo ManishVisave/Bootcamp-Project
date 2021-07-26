@@ -10,7 +10,7 @@ module.exports.register=function(req,res){
     "password":req.body.password,
     "mobile":req.body.mobile,
     "whatsapp":req.body.whatsapp,
-    "location":req.body.location
+    "location_id":req.body.location
   }
   connection.query('INSERT INTO users SET ?',users, function (error, results, fields) {
     if (error) {
