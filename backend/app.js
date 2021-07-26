@@ -30,10 +30,10 @@ app.get("/getAll",async (req,res)=>{
   }).catch(err => console.log(err))
 })
 
-app.delete('/delete/:propertyid', async (req,res) => {
-  await db.deleteRecord(req.params.propertyid).then(result => {
+app.delete('/delete', async (req,res) => {
+  await db.deleteRecord(req.query.propertyId,req.query.userId).then(result => {
     res.json(result)
-  }).catch(err => console.log(err))
+  }).catch(err => res.json(err))
 })
 
 app.listen(8888,(req,res)=>{

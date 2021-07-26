@@ -1,3 +1,5 @@
+
+
 const mysql = require('mysql')
 
 var con = mysql.createConnection({
@@ -59,7 +61,7 @@ getSQLInsertStmt = (tableName) =>{
     }else if(tableName === "currency"){
         sql = "INSERT INTO currency (currency_name) VALUES(?)"
     }else{
-        sql = "INSERT INTO property (location_id,address,currency_id,length,breadth,area,price,description) VALUES(?,?,?,?,?,?,?,?)"
+        sql = "INSERT INTO property (location_id,address,currency_id,length,breadth,area,price,description,user_id) VALUES(?,?,?,?,?,?,?,?,?)"
     }
 
     return sql
@@ -91,6 +93,7 @@ insertRecord = async (propertyRecord) => {
     var localityId = 0;
     var propertyId = 0;
     
+    console.log("Came Here 1")
     let countryExists =  await getExists("country","country_name",propertyRecord.country)
     if(!countryExists){
         let insertVal = await insertOne("country",propertyRecord.country)
@@ -111,6 +114,7 @@ insertRecord = async (propertyRecord) => {
         cityId = cityExists
     }
     
+    console.log("Came Here 2")
     let localityExists =  await getExists("locality","location_name",propertyRecord.location)
     if(!localityExists){
         let data = {"city_id" : cityId, "location_name": propertyRecord.location, "location_pin": propertyRecord.pin}
@@ -121,18 +125,6 @@ insertRecord = async (propertyRecord) => {
     }else{
         localityId = localityExists
     }
-    
-    
-    
-    // let localityExists =  await getExists("locality","location_name",propertyRecord.location)
-    // localityExists.then(result => {
-    //     localityId = result
-    // }).catch(async err => {
-    //     let data = {"city_id" : cityId, "location_name": propertyRecord.location, "location_pin": propertyRecord.pin}
-    //     await insertOne("locality",data).then(result => {
-    //         localityId = result
-    //     }).catch(err => {return "Error In Adding Locality"})
-    // })
 
     let currencyExists =  await getExists("currency","currency_name",propertyRecord.currency)
     if(!currencyExists){
@@ -143,20 +135,7 @@ insertRecord = async (propertyRecord) => {
     }else{
         currencyId = currencyExists
     }
-    
-    
 
-    // let currencyExists =  await getExists("currency","currency_name",propertyRecord.currency)
-    // currencyExists.then(result => {
-    //     currencyId = result
-    // }).catch(async err => {
-    //     let data = {"currency_name" : propertyRecord.currency}
-    //     await insertOne("currency",data).then(result => {
-    //         currencyId = result
-    //     }).catch(err => {return "Error In Adding Currency"})
-    // })
-
-    
     data = {
         "location_id":localityId,
         "address":propertyRecord.address,
@@ -165,12 +144,11 @@ insertRecord = async (propertyRecord) => {
         "breadth":propertyRecord.breadth,
         "area": parseInt(propertyRecord.length, 10)*parseInt(propertyRecord.breadth, 10),
         "price":parseFloat(propertyRecord.price),
-        "description": propertyRecord.description
+        "description": propertyRecord.description,
+        "user_id":propertyRecord.user_id
     }    
 
     return new Promise(async (resolve,reject)=>{
-        // console.log("Length: "+propertyRecord.length)
-
         let insertVal = await insertOne("property",data)
         if(insertVal === "false") reject("Error In Adding Property")
         else resolve("Property Added")
@@ -178,15 +156,38 @@ insertRecord = async (propertyRecord) => {
 
 }
 
-deleteRecord = (id) => {
+authorizedToDelete = (data) => {
     return new Promise((resolve,reject)=>{
-        con.query('DELETE FROM demo WHERE id = ?',id,(err,data)=>{
-            if(data === undefined){
-                reject(new Error(err))
+        con.query('SELECT * FROM property WHERE ??=? and ??=?',data,(err,result)=>{
+            if(result === undefined){
+                resject(false)
+                // console.log("Data Undefined: "+err)
             }else{
-                resolve(data)
+                // console.log("Data defined: "+JSON.stringify(result))
+                resolve(true)
             }
         })
+    })
+}
+
+deleteRecord = async (propertyId,userId) => {
+
+    let authorized = false
+    let tmp = ["property_id",propertyId,"user_id",userId]
+    authorized = await authorizedToDelete(tmp)
+
+    return new Promise(async (resolve,reject)=>{
+        if(authorized){
+            await con.query('DELETE FROM property WHERE property_id = ?',propertyId,(err,result)=>{
+                if(result === undefined){
+                    reject("Error in Deleting...")
+                }else{
+                    resolve("Record Deleted")
+                }
+            })
+        }else{
+            reject("Error In deleting...")
+        }
     })
 }
 
