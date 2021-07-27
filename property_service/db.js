@@ -18,20 +18,13 @@ con.connect((err) => {
 getExists = (table,searchColName,searchData) => {
     return new Promise(async (resolve,reject)=>{
         data = [table,searchColName,searchData]
-        await con.query("SELECT * FROM ?? WHERE ??=?",data,(err,result)=>{
-            if(result.length != 0){
-                if(result === undefined){
-                    reject(false)
-                }else{
+        con.query("SELECT * FROM ?? WHERE ??=?",data,(err,result)=>{
+            if(result != undefined && result.length != 0){
                     let key = Object.keys(result[0])[0]
-                    // console.log(result[0][key])
                     resolve(result[0][key])
-                }
             }else{
                 reject(false)
             }
-
-            
         })
     })
 }
@@ -93,7 +86,6 @@ insertRecord = async (propertyRecord) => {
     var localityId = 0;
     var propertyId = 0;
     
-    console.log("Came Here 1")
     let countryExists =  await getExists("country","country_name",propertyRecord.country)
     if(!countryExists){
         let insertVal = await insertOne("country",propertyRecord.country)
