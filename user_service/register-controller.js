@@ -1,6 +1,6 @@
 var connection = require('./config');
 
-var bcrypt = require('bcrypt');
+var bcrypt = require('bcryptjs');
 
 /*
 {
