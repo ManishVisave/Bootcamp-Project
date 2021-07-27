@@ -1,0 +1,25 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/name: property
+    app.kubernetes.io/instance: property-instance
+    app.kubernetes.io/version: '1.0.0'
+    app.kubernetes.io/managed-by: kubectl
+  name: property-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: property
+  template:
+    metadata:
+      labels:
+        app: property
+    spec:
+      containers:
+        - image: 477360050105.dkr.ecr.us-east-2.amazonaws.com/property
+          imagePullPolicy: Always
+          name: property
+          ports:
+            - containerPort: 4040
