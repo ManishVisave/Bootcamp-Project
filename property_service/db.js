@@ -68,14 +68,17 @@ getSQLInsertStmt = (tableName) =>{
 }
 
 insertOne = (tableName,data) => {
-    
+
     let sql = getSQLInsertStmt(tableName)
+    // console.log("SQL: "+sql)
+    // console.log("data: "+data)
+
     data = Object.values(data)
     return new Promise((resolve,reject)=>{
         con.query(sql,data,(err,result)=>{ 
             if(result === undefined){
-                console.log(err)
-                // reject("false")
+                // console.log(err)
+                reject("false")
             }else{
                 resolve(result.insertId)
             }
@@ -85,7 +88,7 @@ insertOne = (tableName,data) => {
 }
 
 insertRecord = async (propertyRecord) => {
-    // console.log(propertyRecord)
+    console.log(propertyRecord)
     var countryId = 0;
     var currencyId = 0;
     var cityId = 0;
@@ -95,7 +98,6 @@ insertRecord = async (propertyRecord) => {
 
     countryExists =  await getExists("country","country_name",propertyRecord.country)
 
-    console.log(countryExists)
     if(!countryExists){
         console.log("Came Here 1")
         let insertVal =  await insertOne("country",propertyRecord.country)
@@ -118,7 +120,7 @@ insertRecord = async (propertyRecord) => {
     
     // console.log("Came Here 2")
     let localityExists =  await getExists("locality","location_name",propertyRecord.location)
-    console.log("Locality : "+localityExists)
+    // console.log("Locality : "+localityExists)
 
     if(!localityExists){
 
@@ -141,8 +143,8 @@ insertRecord = async (propertyRecord) => {
         currencyId = currencyExists
     }
 
-    console.log("Location Id: "+JSON.stringify(localityId))
-    console.log("Currency Id: "+JSON.stringify(currencyId))
+    // console.log("Location Id: "+JSON.stringify(localityId))
+    // console.log("Currency Id: "+JSON.stringify(currencyId))
     
 
     data = {

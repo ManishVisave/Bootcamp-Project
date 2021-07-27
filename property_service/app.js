@@ -1,5 +1,8 @@
 const express = require('express')
 const db = require('./db.js')
+var multipart = require('connect-multiparty');
+var uploader = require('./testUpload.js')
+var multipartMiddleware = multipart();
 
 var app = express()
 
@@ -17,8 +20,15 @@ app.get("/",(req,res)=>{
   res.send("Server Listening.....")
 })
 
-app.post("/add",async (req,res)=>{
-  // console.log(req.body)
+app.post("/add",multipartMiddleware,async (req,res)=>{
+  let array = []
+
+  for(let i = 0; i < req.files.file.length; i++){
+    array.push(await uploader.upload(req.files.file[i]))
+  }
+
+  if(array.length != 0) req.body.files = array
+  console.log("Array: "+array.length)
   await db.insertRecord(req.body).then(result => {
     res.json('Record added')
   }).catch(err=>console.log(err))
