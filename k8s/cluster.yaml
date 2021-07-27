@@ -1,0 +1,14 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: property-cluster #cluster name
+  region: us-east-2a #desired region
+
+nodeGroups:
+  - name: property-node #cluster node group name
+    instanceType: t2.micro #desired instance type
+    desiredCapacity: 3 #desired nodes count / capacity
+    ssh:
+      allow: false # if true - will use ~/.ssh/id_rsa.pub as the default ssh key
+      #publicKeyPath: ~/.ssh/ec2_id_rsa.pub #you can specify the public key path likr this as well
