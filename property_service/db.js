@@ -18,7 +18,9 @@ con.connect((err) => {
 getExists = (table,searchColName,searchData) => {
     return new Promise(async (resolve,reject)=>{
         data = [table,searchColName,searchData]
+       //console.log(data)
         await con.query("SELECT * FROM ?? WHERE ??=?",data,(err,result)=>{
+            //console.log(result.length)
             if(result.length != 0){
                 if(result === undefined){
                     reject(false)
@@ -29,9 +31,7 @@ getExists = (table,searchColName,searchData) => {
                 }
             }else{
                 reject(false)
-            }
-
-            
+            }   
         })
     })
 }
@@ -93,9 +93,12 @@ insertRecord = async (propertyRecord) => {
     var localityId = 0;
     var propertyId = 0;
     
-    console.log("Came Here 1")
+    //console.log("Came Here 1")
+    //console.log(propertyRecord)
     let countryExists =  await getExists("country","country_name",propertyRecord.country)
+    console.log(countryExists)
     if(!countryExists){
+        //console.log("Came Here 1")
         let insertVal = await insertOne("country",propertyRecord.country)
         if(insertVal === "false") throw Error("Error in Adding Country")
         else countryId = insertVal
