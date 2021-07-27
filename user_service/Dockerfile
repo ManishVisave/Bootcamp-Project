@@ -5,8 +5,10 @@ WORKDIR /home/app/user
 
 
 RUN npm install express
+RUN npm install jsonwebtoken
 RUN npm install mysql
- 
+RUN npm install bcryptjs 
+
 
 RUN mkdir src
 COPY . src/
