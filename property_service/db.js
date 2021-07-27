@@ -23,7 +23,7 @@ async function getExists(table,searchColName,searchData){
                 let key = Object.keys(result[0])[0]
                 resolve(result[0][key])
             }else{
-                reject("false")
+                reject(false)
             }
         })
     })
@@ -118,12 +118,15 @@ insertRecord = async (propertyRecord) => {
     
     // console.log("Came Here 2")
     let localityExists =  await getExists("locality","location_name",propertyRecord.location)
+    console.log("Locality : "+localityExists)
+
     if(!localityExists){
+
         let data = {"city_id" : cityId, "location_name": propertyRecord.location, "location_pin": propertyRecord.pin}
-        
         let insertVal = await insertOne("locality",data)
         if(insertVal === "false") throw Error("Error in Adding Country")
         else localityId = insertVal
+    
     }else{
         localityId = localityExists
     }
@@ -158,6 +161,21 @@ insertRecord = async (propertyRecord) => {
         let insertVal = await insertOne("property",data)
         if(insertVal === "false") reject("Error In Adding Property")
         else resolve("Property Added")
+    })
+
+}
+
+
+
+recommended = async (user_city) => {
+    console.log("User_city " + user_city)
+    return new Promise(async (resolve,reject) => {
+        let sql = 'SELECT * FROM property WHERE location_id in (select location_id from locality where city_id in (select city_id from city where city_name = (?)))'
+        await con.query(sql,user_city,(err,result)=>{
+            console.log(err)
+            if(result.length != 0) resolve(result)
+            else reject("No properties in your city")
+        })
     })
 
 }
@@ -201,3 +219,4 @@ exports.con = con;
 exports.retriveData = getAllData;
 exports.insertRecord = insertRecord
 exports.deleteRecord = deleteRecord
+exports.recommended = recommended

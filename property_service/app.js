@@ -24,6 +24,12 @@ app.post("/add",async (req,res)=>{
   }).catch(err=>console.log(err))
 })
 
+app.get('/recommend',async (req,res) =>{
+  await db.recommended(req.body.user_city).then(result =>{
+    res.json(result)
+  }).catch(err=>res.json(err))
+})
+
 app.get("/getAll",async (req,res)=>{
   await db.retriveData().then(result => {
     res.json(result)
