@@ -1,5 +1,5 @@
 var connection = require('./config');
-var bcrypt = require('bcryptjs');
+var bcrypt = require('bcrypt');
 
 module.exports.change=function(req,res){
 var email = req.body.email;
