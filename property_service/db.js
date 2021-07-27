@@ -15,18 +15,24 @@ con.connect((err) => {
     console.log("Connected!");
 });
 
-getExists = (table,searchColName,searchData) => {
-    return new Promise(async (resolve,reject)=>{
+async function getExists(table,searchColName,searchData){
+    let val = new Promise(async (resolve,reject)=>{
         data = [table,searchColName,searchData]
-        con.query("SELECT * FROM ?? WHERE ??=?",data,(err,result)=>{
+        await con.query("SELECT * FROM ?? WHERE ??=?",data,(err,result)=>{
             if(result != undefined && result.length != 0){
-                    let key = Object.keys(result[0])[0]
-                    resolve(result[0][key])
+                let key = Object.keys(result[0])[0]
+                resolve(result[0][key])
             }else{
-                reject(false)
+                reject("false")
             }
         })
     })
+    return val.then((res)=>{
+        return res;
+    }).catch((err) => {
+        return err;
+    })
+
 }
 
 getAllData = () =>{
@@ -62,14 +68,14 @@ getSQLInsertStmt = (tableName) =>{
 }
 
 insertOne = (tableName,data) => {
-    // console.log("CAME")
+    
     let sql = getSQLInsertStmt(tableName)
     data = Object.values(data)
     return new Promise((resolve,reject)=>{
         con.query(sql,data,(err,result)=>{ 
             if(result === undefined){
-                // console.log(err)
-                reject("false")
+                console.log(err)
+                // reject("false")
             }else{
                 resolve(result.insertId)
             }
@@ -85,30 +91,32 @@ insertRecord = async (propertyRecord) => {
     var cityId = 0;
     var localityId = 0;
     var propertyId = 0;
-    
-    let countryExists =  await getExists("country","country_name",propertyRecord.country)
+    let countryExists = false;
+
+    countryExists =  await getExists("country","country_name",propertyRecord.country)
+
     console.log(countryExists)
     if(!countryExists){
-        //console.log("Came Here 1")
-        let insertVal = await insertOne("country",propertyRecord.country)
+        console.log("Came Here 1")
+        let insertVal =  await insertOne("country",propertyRecord.country)
         if(insertVal === "false") throw Error("Error in Adding Country")
         else countryId = insertVal
     }else{
         countryId = countryExists
     }
     
-    let cityExists =  await getExists("city","city_name",propertyRecord.city)
+    let cityExists = await getExists("city","city_name",propertyRecord.city)
     if(!cityExists){
         let data = {"country_id" : countryId, "city_name": propertyRecord.city}
         
-        let insertVal = await insertOne("city",data)
+        let insertVal =  await insertOne("city",data)
         if(insertVal === "false") throw Error("Error in Adding Country")
         else cityId = insertVal
     }else{
         cityId = cityExists
     }
     
-    console.log("Came Here 2")
+    // console.log("Came Here 2")
     let localityExists =  await getExists("locality","location_name",propertyRecord.location)
     if(!localityExists){
         let data = {"city_id" : cityId, "location_name": propertyRecord.location, "location_pin": propertyRecord.pin}
@@ -123,12 +131,16 @@ insertRecord = async (propertyRecord) => {
     let currencyExists =  await getExists("currency","currency_name",propertyRecord.currency)
     if(!currencyExists){
         let data = {"currency_name" : propertyRecord.currency}
-        let insertVal = await insertOne("currency",data)
+        let insertVal =  await insertOne("currency",data)
         if(insertVal === "false") throw Error("Error in Adding Country")
         else currencyId = insertVal
     }else{
         currencyId = currencyExists
     }
+
+    console.log("Location Id: "+JSON.stringify(localityId))
+    console.log("Currency Id: "+JSON.stringify(currencyId))
+    
 
     data = {
         "location_id":localityId,

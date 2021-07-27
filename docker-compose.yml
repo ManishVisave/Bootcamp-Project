@@ -23,7 +23,6 @@ services:
       - overlay
 
   property:
-    image: 477360050105.dkr.ecr.us-east-2.amazonaws.com/property
     build:
         context: ./property_service
         dockerfile: ./Dockerfile
@@ -40,7 +39,6 @@ services:
       - "./property_service:/home/app/property/src/"
   
   user:
-    image: 477360050105.dkr.ecr.us-east-2.amazonaws.com/user
     build:
       context: ./user_service
       dockerfile: ./Dockerfile
