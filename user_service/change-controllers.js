@@ -1,9 +1,9 @@
-var connection = require('./config');
-var bcrypt = require('bcryptjs');
+ar connection = require('./config');
+var bcrypt = require('bcrypt');
 
 module.exports.change=function(req,res){
 var email = req.body.email;
-var password = req.body.password;
+var password = bcrypt.hashSync(req.body.password, 8);
 
 connection.query('UPDATE users SET password =? WHERE email =?',[password,email],function (error, results, fields) {
             if(error){
