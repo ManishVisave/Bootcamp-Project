@@ -15,7 +15,7 @@ module.exports.authenticate=function(req,res){
       }else{
         if(results.length >0){
           bcrypt.compare(password, results[0].password, function(err, ress) {
-              console.log(err);
+            
               if(!ress){
                   res.json({
                     status:false,                  
@@ -23,8 +23,7 @@ module.exports.authenticate=function(req,res){
                     message:"Email and password does not match"
                   });
               }else{           
-
-                var token=jwt.sign(JSON.parse(JSON.stringify(results[0])),process.env.SECRET_KEY,{
+                var token=jwt.sign(results[0],"qwe1234",{
                   expiresIn:5000
               });         
                   res.json({
