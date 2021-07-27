@@ -1,14 +1,17 @@
 # specify the node base image with your desired version node:<version>
 FROM node:latest
 
-WORKDIR /home/app/backend
+WORKDIR /home/app/user
 
-COPY . .
 
 RUN npm install express
 RUN npm install mysql
+ 
 
-# replace this with your application's default port
-EXPOSE 8888
+RUN mkdir src
+COPY . src/
 
-CMD ["node","app.js"]
+
+EXPOSE 8081
+
+CMD ["node", "src/index.js"]
