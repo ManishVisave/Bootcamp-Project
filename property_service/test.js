@@ -89,8 +89,7 @@ exports.search= async (req) => {
 	//url = "https://www.amdoren.com/api/currency.php?api_key="+api_key+"&from="+from+"&to="+to;
     // url = "https://www.amdoren.com/api/currency.php?api_key=8YXiPg7pJdaLcnGjAVcNKyxQ2cy8B3&from=INR&to=USD"
 
-    url =  'https://data.fixer.io/api/' + endpoint + '?access_key=' + access_key +'&from=' + from + '&to=' + to + '&amount=' + amount,   
-    dataType: 'jsonp',
+    url =  'https://data.fixer.io/api/' + endpoint + '?access_key=' + access_key +'&from=' + from + '&to=' + to + '&amount=' + amount
     let res = await axios.get(url);
 
     let data = res.data;
