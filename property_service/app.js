@@ -34,6 +34,13 @@ app.post("/add",multipartMiddleware,async (req,res)=>{
   }).catch(err=>console.log(err))
 })
 
+app.post("/update",async (req,res)=>{
+  console.log(req.body)
+  await db.updateRecord(req.body).then(result => {
+    res.json('Record updated')
+  }).catch(err=>console.log(err))
+})
+
 app.get('/recommend',async (req,res) =>{
   await db.recommended(req.body.user_city).then(result =>{
     res.json(result)

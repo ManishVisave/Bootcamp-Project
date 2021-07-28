@@ -182,7 +182,7 @@ recommended = async (user_city) => {
 
 }
 
-authorizedToDelete = (data) => {
+authorizedToManipulate = (data) => {
     return new Promise((resolve,reject)=>{
         con.query('SELECT * FROM property WHERE ??=? and ??=?',data,(err,result)=>{
             if(result === undefined){
@@ -196,11 +196,124 @@ authorizedToDelete = (data) => {
     })
 }
 
+updateRecord = async (propertyRecord) => {
+
+    let authorized = false
+    let tmp = ["property_id",propertyRecord.propertyId,"user_id",propertyRecord.userId]
+    authorized = await authorizedToManipulate(tmp)
+
+    let val = new Promise(async (resolve,reject)=>{
+        if(authorized){
+            var countryId = 0;
+            var currencyId = 0;
+            var cityId = 0;
+            var localityId = 0;
+            let countryExists = false;
+            var data = {};
+
+            if('country' in propertyRecord && 'city' in propertyRecord && 'location' in propertyRecord && 'pin' in propertyRecord){
+                countryExists =  await getExists("country","country_name",propertyRecord.country)
+                console.log(countryExists)
+                if(!countryExists){
+                    console.log("Came Here 1")
+                    let insertVal =  await insertOne("country",propertyRecord.country)
+                    if(insertVal === "false") throw Error("Error in Adding Country")
+                    else countryId = insertVal
+                }else{
+                    countryId = countryExists
+                }
+                
+                
+                let cityExists = await getExists("city","city_name",propertyRecord.city)
+                if(!cityExists){
+                    let data = {"country_id" : countryId, "city_name": propertyRecord.city}                
+                    let insertVal =  await insertOne("city",data)
+                    if(insertVal === "false") throw Error("Error in Adding Country")
+                    else cityId = insertVal
+                }else{
+                    cityId = cityExists
+                }
+                
+                
+                let localityExists =  await getExists("locality","location_name",propertyRecord.location)
+                if(!localityExists){
+
+                    let data = {"city_id" : cityId, "location_name": propertyRecord.location, "location_pin": propertyRecord.pin}
+                    let insertVal = await insertOne("locality",data)
+                    if(insertVal === "false") throw Error("Error in Adding Country")
+                    else localityId = insertVal
+                    
+                }else{
+                    localityId = localityExists
+                }
+                data["location_id"] = localityId
+            }
+            check = 'currency' in propertyRecord;
+            if(check){
+                let currencyExists =  await getExists("currency","currency_name",propertyRecord.currency)
+                if(!currencyExists){
+                    let data = {"currency_name" : propertyRecord.currency}
+                    let insertVal =  await insertOne("currency",data)
+                    if(insertVal === "false") throw Error("Error in Adding Country")
+                    else currencyId = insertVal
+                }else{
+                    currencyId = currencyExists
+                }
+                data["currency_id"] = localityId
+            }
+
+            check_length = 'length' in propertyRecord;
+            check_breadth = 'breadth' in propertyRecord;
+            if(check_length && check_breadth){
+                data["length"] = propertyRecord.length;
+                data["breadth"] = propertyRecord.breadth;
+                data["area"] = parseInt(propertyRecord.length, 10)*parseInt(propertyRecord.breadth, 10);
+            }
+            else if(check_length && !check_breadth){
+                throw Error("Enter both length and breadth")
+            }
+            else if(check_breadth && !check_length){
+                throw Error("Enter both length and breadth")
+            }
+
+            check = 'price' in propertyRecord;
+            if(check){
+                data['price'] = propertyRecord.price;
+            }
+
+            check = 'description' in propertyRecord;
+            if(check){
+                data['description'] = propertyRecord.description;
+            } 
+            console.log(data);
+            const query = "Update property SET " + Object.keys(data).map(key => `${key} = ?`).join(", ") + " WHERE property_id = ?"
+            console.log(query);
+            const parameters = [...Object.values(data),propertyRecord.property_id];
+            console.log(parameters)
+            await con.query(query,parameters,(err,result)=>{
+                if(result === undefined){
+                    reject("Error in updating")
+                }else{
+                     resolve("Record Updated")
+                }
+            })
+        }else{
+            resolve("Not Authorised")
+        }
+    })
+    return val.then((res)=>{
+        return res;
+    }).catch((err) => {
+        return err;
+    })
+}
+
+
 deleteRecord = async (propertyId,userId) => {
 
     let authorized = false
     let tmp = ["property_id",propertyId,"user_id",userId]
-    authorized = await authorizedToDelete(tmp)
+    authorized = await authorizedToManipulate(tmp)
 
     return new Promise(async (resolve,reject)=>{
         if(authorized){
@@ -222,3 +335,4 @@ exports.retriveData = getAllData;
 exports.insertRecord = insertRecord
 exports.deleteRecord = deleteRecord
 exports.recommended = recommended
+exports.updateRecord = updateRecord

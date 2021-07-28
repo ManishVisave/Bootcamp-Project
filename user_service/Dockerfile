@@ -8,6 +8,7 @@ RUN npm install express
 RUN npm install jsonwebtoken
 RUN npm install mysql
 RUN npm install bcryptjs 
+RUN npm install jwt-decode 
 
 
 RUN mkdir src
