@@ -2,6 +2,7 @@
 
 const mysql = require('mysql')
 const currency = require('./test.js')
+const jwt_decode =require('jwt-decode');
 
 var con = mysql.createConnection({
     host: process.env.DB_HOST,
@@ -34,6 +35,61 @@ async function getExists(table,searchColName,searchData){
         return err;
     })
 
+}
+
+async function getLocationById(searchId){
+    let val = new Promise(async (resolve,reject)=>{
+        await con.query("SELECT location_name FROM locality WHERE location_id=?",searchId,(err,result)=>{
+            console.log("location name :"+result)
+            if(result != undefined && result.length != 0){
+                resolve(result[0]['location_name'])
+            }else{
+                reject(false)
+            }
+        })
+    })
+    return val.then((res)=>{
+        return res;
+    }).catch((err) => {
+        return err;
+    })
+}
+
+async function getUserById(searchId){
+    let val = new Promise(async (resolve,reject)=>{
+        await con.query("SELECT name,email,mobile FROM users WHERE user_id=?",searchId,(err,result)=>{
+            console.log("user :"+JSON.stringify(result))
+            if(result != undefined && result.length != 0){
+                resolve(result)
+            }else{
+                reject(false)
+            }
+        })
+    })
+    return val.then((res)=>{
+        return res;
+    }).catch((err) => {
+        return err;
+    })
+}
+
+async function getPropertyById(searchId){
+    console.log("searchId :"+searchId)
+    let val = new Promise(async (resolve,reject)=>{
+        await con.query("SELECT user_id FROM property WHERE property_id=?",searchId,(err,result)=>{
+            console.log(" :"+err)
+            if(result != undefined && result.length != 0){
+                resolve(result[0]['user_id'])
+            }else{
+                reject(false)
+            }
+        })
+    })
+    return val.then((res)=>{
+        return res;
+    }).catch((err) => {
+        return err;
+    })
 }
 
 getAllData = () =>{
@@ -89,7 +145,11 @@ insertOne = (tableName,data) => {
 
 
 
-insertRecord = async (propertyRecord) => {
+insertRecord = async (req) => {
+    let token = req.get("authorization");
+    var decoded = jwt_decode(token);
+    userId = decoded.user_id;
+    //console.log(JSON.stringify(decoded))
     // console.log(propertyRecord)
     var countryId = 0;
     var currencyId = 0;
@@ -97,7 +157,8 @@ insertRecord = async (propertyRecord) => {
     var localityId = 0;
     var propertyId = 0;
     let countryExists = false;
-
+    console.log(JSON.stringify(req.body))
+    propertyRecord = req.body;
     countryExists =  await getExists("country","country_name",propertyRecord.country)
 
     if(!countryExists){
@@ -166,7 +227,7 @@ insertRecord = async (propertyRecord) => {
         "area": parseInt(propertyRecord.length, 10)*parseInt(propertyRecord.breadth, 10),
         "price":price,
         "description": propertyRecord.description,
-        "user_id":propertyRecord.user_id
+        "user_id":userId
     }    
     
     
@@ -191,6 +252,9 @@ insertRecord = async (propertyRecord) => {
                 else
                     resolve("Property Added.....")
             }
+            else{
+                resolve("Property Added")
+            }
         })
     }
 
@@ -199,13 +263,30 @@ insertRecord = async (propertyRecord) => {
 
 
 
-recommended = async (user_city) => {
-    console.log("User_city " + user_city)
+recommended = async (req) => {
+    
+    let token = req.get("authorization");
+    var decoded = jwt_decode(token);
+    userCity = decoded.location;
+    console.log("User_city " + userCity)
     return new Promise(async (resolve,reject) => {
         let sql = 'SELECT * FROM property WHERE location_id in (select location_id from locality where city_id in (select city_id from city where city_name = (?)))'
-        await con.query(sql,user_city,(err,result)=>{
+        await con.query(sql,userCity,async(err,result)=>{
             console.log(err)
-            if(result.length != 0) resolve(result)
+            if(result.length != 0){ 
+                result = JSON.stringify(result);
+                result = JSON.parse(result)
+                
+                for(let i=0;i<result.length;i++){
+                    var location = result[i]['location_id']
+                    delete result[i]['location_id']
+                    result[i]['location'] =  await getLocationById(location);
+
+                    var user_id = result[i]['user_id']
+                    delete result[i]['user_id']
+                    result[i]['posted by'] =  await getUserById(user_id)
+                }
+                resolve(result)}
             else reject("No properties in your city")
         })
     })
@@ -216,7 +297,7 @@ authorizedToManipulate = (data) => {
     return new Promise((resolve,reject)=>{
         con.query('SELECT * FROM property WHERE ??=? and ??=?',data,(err,result)=>{
             if(result === undefined){
-                resject(false)
+                reject(false)
                 // console.log("Data Undefined: "+err)
             }else{
                 // console.log("Data defined: "+JSON.stringify(result))
@@ -226,13 +307,24 @@ authorizedToManipulate = (data) => {
     })
 }
 
-updateRecord = async (propertyRecord) => {
-
-    let authorized = false
-    let tmp = ["property_id",propertyRecord.propertyId,"user_id",propertyRecord.userId]
-    authorized = await authorizedToManipulate(tmp)
+updateRecord = async (req) => {
 
     let val = new Promise(async (resolve,reject)=>{
+        let token = req.get("authorization");
+        var decoded = jwt_decode(token);
+        userId = decoded.user_id;
+        let authorized = false
+        propertyRecord = req.body;
+        propUserId = await getPropertyById(propertyRecord.property_id)
+        console.log("user id :"+userId)
+        if(userId == propUserId){
+            console.log("in equal")
+            authorized = true;
+        }
+        else{
+
+            reject( "User not authorised to update")
+        }
         if(authorized){
             var countryId = 0;
             var currencyId = 0;
@@ -337,15 +429,23 @@ updateRecord = async (propertyRecord) => {
 }
 
 
-deleteRecord = async (propertyId,userId) => {
-
-    let authorized = false
-    let tmp = ["property_id",propertyId,"user_id",userId]
-    authorized = await authorizedToManipulate(tmp)
-
+deleteRecord = async (req) => {
     return new Promise(async (resolve,reject)=>{
+        let token = req.get("authorization");
+        var decoded = jwt_decode(token);
+        propertyRecord = req.body
+        userId = decoded.user_id;
+        let authorized = false
+        console.log("propertyRecord"+JSON.stringify(propertyRecord))
+        propUserId = await getPropertyById(propertyRecord.property_id)
+        if(userId == propUserId){
+            authorized = true;
+        }
+        else{
+            reject( "User not authorised to delete")
+        }
         if(authorized){
-            await con.query('DELETE FROM property WHERE property_id = ?',propertyId,(err,result)=>{
+            await con.query('DELETE FROM property WHERE property_id = ?',propertyRecord.property_id,(err,result)=>{
                 if(result === undefined){
                     reject("Error in Deleting...")
                 }else{

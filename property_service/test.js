@@ -80,12 +80,17 @@ exports.search= async (req) => {
 
  exports.currencyExchange = async(from,to) =>{
     let val = new Promise(async (resolve,reject)=>{
-
+        endpoint = 'convert';
         api_key = process.env.CURRENCY_API_KEY;
+        from = 'EUR';
+        to = 'GBP';
+        amount = '10'
 	
-	
-	url = "https://www.amdoren.com/api/currency.php?api_key="+api_key+"&from="+from+"&to="+to;
+	//url = "https://www.amdoren.com/api/currency.php?api_key="+api_key+"&from="+from+"&to="+to;
     // url = "https://www.amdoren.com/api/currency.php?api_key=8YXiPg7pJdaLcnGjAVcNKyxQ2cy8B3&from=INR&to=USD"
+
+    url =  'https://data.fixer.io/api/' + endpoint + '?access_key=' + access_key +'&from=' + from + '&to=' + to + '&amount=' + amount,   
+    dataType: 'jsonp',
     let res = await axios.get(url);
 
     let data = res.data;

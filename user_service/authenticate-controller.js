@@ -23,7 +23,7 @@ module.exports.authenticate=function(req,res){
                     message:"Email and password does not match"
                   });
               }else{           
-                var token=jwt.sign(results[0],"qwe1234",{
+                var token=jwt.sign(JSON.parse(JSON.stringify(results[0])),"qwe1234",{
                   expiresIn:5000
               });         
                   res.json({
