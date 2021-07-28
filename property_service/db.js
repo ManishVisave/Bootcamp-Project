@@ -1,6 +1,7 @@
 
 
 const mysql = require('mysql')
+const currency = require('./test.js')
 
 var con = mysql.createConnection({
     host: process.env.DB_HOST,
@@ -147,8 +148,15 @@ insertRecord = async (propertyRecord) => {
 
     // console.log("Location Id: "+JSON.stringify(localityId))
     // console.log("Currency Id: "+JSON.stringify(currencyId))
-    
 
+    let exchange= 1
+    let price = parseFloat(propertyRecord.price)
+    if(propertyRecord.currency !== "INR"){
+        exchange = await currency.currencyExchange(propertyRecord.currency,"INR")
+    }
+    price = price*exchange
+
+    console.log("Exchange: "+exchange)
     data = {
         "location_id":localityId,
         "address":propertyRecord.address,
@@ -156,7 +164,7 @@ insertRecord = async (propertyRecord) => {
         "length":propertyRecord.length,
         "breadth":propertyRecord.breadth,
         "area": parseInt(propertyRecord.length, 10)*parseInt(propertyRecord.breadth, 10),
-        "price":parseFloat(propertyRecord.price),
+        "price":price,
         "description": propertyRecord.description,
         "user_id":propertyRecord.user_id
     }    

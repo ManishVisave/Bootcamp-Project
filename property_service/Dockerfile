@@ -8,7 +8,8 @@ RUN npm install connect-multiparty
 RUN npm install --save aws-sdk
 RUN npm install express
 RUN npm install mysql
-
+RUN npm install node-fetch
+RUN npm install axios
 
 RUN mkdir src
 COPY . src/

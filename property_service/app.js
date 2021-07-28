@@ -3,8 +3,9 @@ const db = require('./db.js')
 var multipart = require('connect-multiparty');
 var uploader = require('./testUpload.js')
 var multipartMiddleware = multipart();
-
+var find = require('./test.js')
 var app = express()
+
 
 bodyParser = require('body-parser');
 app.set('json spaces', 40)
@@ -58,6 +59,20 @@ app.get("/getAll",async (req,res)=>{
 
 app.delete('/delete', async (req,res) => {
   await db.deleteRecord(req.query.propertyId,req.query.userId).then(result => {
+    res.json(result)
+  }).catch(err => res.json(err))
+})
+
+app.get('/search',async (req ,res) => {
+  console.log(req.query)
+  await find.search(req).then(result => {
+    res.json(result)
+  }).catch(err => res.json(err))
+})
+
+app.get('/convert' , async(req ,res) => {
+  //console.log(req.query)
+  await find.currency_convert().then(result => {
     res.json(result)
   }).catch(err => res.json(err))
 })
