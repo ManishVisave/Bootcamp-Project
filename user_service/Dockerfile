@@ -3,6 +3,7 @@ FROM node:latest
 
 WORKDIR /home/app/user
 
+RUN npm cache clear --force
 RUN npm install jwt-decode
 RUN npm install express
 RUN npm install jsonwebtoken

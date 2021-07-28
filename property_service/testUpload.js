@@ -10,6 +10,7 @@ const s3 = new AWS.S3({
 
 // Create our bucket if it doesn't exist
 exports.upload = async (file) => {
+    console.log(file)
     // Read content from the file
     let val = new Promise(async (resolve,reject) => {
         const fileContent = fs.readFileSync(file['path']);
