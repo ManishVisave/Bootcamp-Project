@@ -28,7 +28,7 @@ app.post("/add",multipartMiddleware,async (req,res)=>{
   }
 
   if(array.length != 0) req.body.files = array
-  console.log("Array: "+array.length)
+  // console.log("Array: "+array.length)
   await db.insertRecord(req.body).then(result => {
     res.json('Record added')
   }).catch(err=>console.log(err))
@@ -45,6 +45,9 @@ app.get('/recommend',async (req,res) =>{
   await db.recommended(req.body.user_city).then(result =>{
     res.json(result)
   }).catch(err=>res.json(err))
+  window.addEventListener("unhandledrejection", event => {
+    console.log(`UNHANDLED PROMISE REJECTION: ${event.reason}`);
+  });
 })
 
 app.get("/getAll",async (req,res)=>{

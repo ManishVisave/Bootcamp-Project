@@ -3,11 +3,11 @@
 const mysql = require('mysql')
 
 var con = mysql.createConnection({
-    host: "propertydb.cidwwfie3bwp.ap-south-1.rds.amazonaws.com",
-    user: "test",
-    password: "testingproperty",
-    port: 3306,
-    database: "property"
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    port: process.env.DB_PORT,
+    database: process.env.DB_DATABASE
 });
 
 con.connect((err) => {
@@ -59,8 +59,10 @@ getSQLInsertStmt = (tableName) =>{
         sql = "INSERT INTO locality (city_id,location_name,location_pin) VALUES(?,?,?)"
     }else if(tableName === "currency"){
         sql = "INSERT INTO currency (currency_name) VALUES(?)"
-    }else{
+    }else if(tableName === "property"){
         sql = "INSERT INTO property (location_id,address,currency_id,length,breadth,area,price,description,user_id) VALUES(?,?,?,?,?,?,?,?,?)"
+    }else{
+        sql = "INSERT INTO photo VALUES(?,?)"
     }
 
     return sql
@@ -70,14 +72,11 @@ getSQLInsertStmt = (tableName) =>{
 insertOne = (tableName,data) => {
 
     let sql = getSQLInsertStmt(tableName)
-    // console.log("SQL: "+sql)
-    // console.log("data: "+data)
-
     data = Object.values(data)
     return new Promise((resolve,reject)=>{
         con.query(sql,data,(err,result)=>{ 
             if(result === undefined){
-                // console.log(err)
+                console.log(err)
                 reject("false")
             }else{
                 resolve(result.insertId)
@@ -88,7 +87,7 @@ insertOne = (tableName,data) => {
 }
 
 insertRecord = async (propertyRecord) => {
-    console.log(propertyRecord)
+    // console.log(propertyRecord)
     var countryId = 0;
     var currencyId = 0;
     var cityId = 0;
@@ -158,12 +157,32 @@ insertRecord = async (propertyRecord) => {
         "description": propertyRecord.description,
         "user_id":propertyRecord.user_id
     }    
+    
+    
+    let insertVal = await insertOne("property",data)
+    if(insertVal === "false") return "Error In Adding Property"
+    else{
+        propertyId = insertVal
+        counter = 0
+        return new Promise(async (resolve,reject) => {
+            if(propertyRecord.files.length != 0){
+                for(let i = 0; i < propertyRecord.files.length; i++){
+                    data = {"property_id":propertyId, "photo":propertyRecord.files[i]}
+                    // console.log("data: "+JSON.stringify(data))
+                    let photoploaded = await insertOne("photo",data)
+                    // console.log("Photoooo: "+photoploaded)
+                    if(photoploaded !== "false") counter++
+                }
+                if(counter == 0)
+                    return "Photos Not Uploaded"
+                else if(counter < propertyRecord.files.length)
+                    return "Some Photos Not Uploaded"
+                else
+                    resolve("Property Added.....")
+            }
+        })
+    }
 
-    return new Promise(async (resolve,reject)=>{
-        let insertVal = await insertOne("property",data)
-        if(insertVal === "false") reject("Error In Adding Property")
-        else resolve("Property Added")
-    })
 
 }
 

@@ -1,4 +1,4 @@
-const jwt_decode =require('jwt-decode');
+const jwt_decode = require('jwt-decode');
 
 module.exports.details = function(req,res){
     let token = req.get("authorization");
