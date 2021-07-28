@@ -12,7 +12,7 @@ const{ checkToken } = require("./auth/token_validation");
 var authenticateController=require('./authenticate-controller');
 var registerController=require('./register-controller');
 var deleteController = require('./delete-controller');
-var changeController = require('./change-controllers');
+var changeController = require('./change-controller');
 var detailsController = require('./details-controller');
 
 //route to handle login ,registration , delete user and change password  

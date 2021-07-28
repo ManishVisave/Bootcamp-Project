@@ -86,6 +86,8 @@ insertOne = (tableName,data) => {
     
 }
 
+
+
 insertRecord = async (propertyRecord) => {
     // console.log(propertyRecord)
     var countryId = 0;
@@ -118,6 +120,7 @@ insertRecord = async (propertyRecord) => {
     }
     
     // console.log("Came Here 2")
+    
     let localityExists =  await getExists("locality","location_name",propertyRecord.location)
     // console.log("Locality : "+localityExists)
 
@@ -267,8 +270,10 @@ updateRecord = async (propertyRecord) => {
                 }
                 data["location_id"] = localityId
             }
-            check = 'currency' in propertyRecord;
-            if(check){
+            check_currency = 'currency' in propertyRecord;
+            check_price = 'price' in propertyRecord;
+            if(check_currency && check_price){
+                data['price'] = propertyRecord.price;
                 let currencyExists =  await getExists("currency","currency_name",propertyRecord.currency)
                 if(!currencyExists){
                     let data = {"currency_name" : propertyRecord.currency}
@@ -278,7 +283,7 @@ updateRecord = async (propertyRecord) => {
                 }else{
                     currencyId = currencyExists
                 }
-                data["currency_id"] = localityId
+                data['currency_id'] = currencyId
             }
 
             check_length = 'length' in propertyRecord;
@@ -295,11 +300,6 @@ updateRecord = async (propertyRecord) => {
                 throw Error("Enter both length and breadth")
             }
 
-            check = 'price' in propertyRecord;
-            if(check){
-                data['price'] = propertyRecord.price;
-            }
-
             check = 'description' in propertyRecord;
             if(check){
                 data['description'] = propertyRecord.description;
@@ -310,6 +310,7 @@ updateRecord = async (propertyRecord) => {
             const parameters = [...Object.values(data),propertyRecord.property_id];
             console.log(parameters)
             await con.query(query,parameters,(err,result)=>{
+                console.log(JSON.stringify(err))
                 if(result === undefined){
                     reject("Error in updating")
                 }else{

@@ -9,6 +9,7 @@ RUN npm install jsonwebtoken
 RUN npm install mysql
 RUN npm install bcryptjs 
 RUN npm install jwt-decode 
+RUN npm install pincode
 
 
 RUN mkdir src
