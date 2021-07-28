@@ -46,7 +46,8 @@ services:
     build:
       context: ./user_service
       dockerfile: ./Dockerfile
-        
+    env_file:
+      - ./.env
     restart: always
     depends_on:
         - mysqldb

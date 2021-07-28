@@ -3,7 +3,7 @@ FROM node:latest
 
 WORKDIR /home/app/user
 
-
+RUN npm install jwt-decode
 RUN npm install express
 RUN npm install jsonwebtoken
 RUN npm install mysql
