@@ -212,14 +212,14 @@ insertRecord = async (req) => {
     // console.log("Location Id: "+JSON.stringify(localityId))
     // console.log("Currency Id: "+JSON.stringify(currencyId))
 
-    let exchange= 1
-    let price = parseFloat(propertyRecord.price)
-    if(propertyRecord.currency !== "INR"){
-        exchange = await currency.currencyExchange(propertyRecord.currency,"INR")
-    }
-    price = price*exchange
+    // let exchange= 1
+    // let price = parseFloat(propertyRecord.price)
+    // if(propertyRecord.currency !== "INR"){
+    //     exchange = await currency.currencyExchange(propertyRecord.currency,"INR")
+    // }
+    // price = price*exchange
 
-    console.log("Exchange: "+exchange)
+    // console.log("Exchange: "+exchange)
     data = {
         "location_id":localityId,
         "address":propertyRecord.address,
@@ -227,7 +227,7 @@ insertRecord = async (req) => {
         "length":propertyRecord.length,
         "breadth":propertyRecord.breadth,
         "area": parseInt(propertyRecord.length, 10)*parseInt(propertyRecord.breadth, 10),
-        "price":price,
+        "price":parseFloat(propertyRecord.price),
         "description": propertyRecord.description,
         "user_id":userId
     }    

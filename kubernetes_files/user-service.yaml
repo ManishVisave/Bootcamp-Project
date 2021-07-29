@@ -5,9 +5,8 @@ metadata:
 spec:
   type: NodePort
   selector:
-    greeting: user
+    app: user
   ports:
-    - name: user
-      protocol: TCP
-      port: 8081
+    - nodePort: 31480
+      port: 8082
       targetPort: 8081

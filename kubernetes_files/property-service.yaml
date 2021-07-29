@@ -5,9 +5,8 @@ metadata:
 spec:
   type: NodePort
   selector:
-    greeting: property
+    app: property
   ports:
-    - name: property
-      protocol: TCP
-      port: 8888
+    - nodePort: 31479
+      port: 8085
       targetPort: 8888
