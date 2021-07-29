@@ -29,7 +29,7 @@ spec:
                 secretKeyRef:
                   name: envs
                   key: DB_PASSWORD
-
+                  
             - name: "DB_USER"
                 valueFrom:
                   secretKeyRef:
