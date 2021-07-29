@@ -42,7 +42,6 @@ async function getExists(table,searchColName,searchData){
 async function getLocationById(searchId){
     let val = new Promise(async (resolve,reject)=>{
         await con.query("SELECT location_name FROM locality WHERE location_id=?",searchId,(err,result)=>{
-            console.log("location name :"+result)
             if(result != undefined && result.length != 0){
                 resolve(result[0]['location_name'])
             }else{
@@ -60,7 +59,6 @@ async function getLocationById(searchId){
 async function getUserById(searchId){
     let val = new Promise(async (resolve,reject)=>{
         await con.query("SELECT name,email,mobile FROM users WHERE user_id=?",searchId,(err,result)=>{
-            console.log("user :"+JSON.stringify(result))
             if(result != undefined && result.length != 0){
                 resolve(result)
             }else{
@@ -76,10 +74,8 @@ async function getUserById(searchId){
 }
 
 async function getPropertyById(searchId){
-    console.log("searchId :"+searchId)
     let val = new Promise(async (resolve,reject)=>{
         await con.query("SELECT user_id FROM property WHERE property_id=?",searchId,(err,result)=>{
-            console.log(" :"+err)
             if(result != undefined && result.length != 0){
                 resolve(result[0]['user_id'])
             }else{
@@ -151,20 +147,16 @@ insertRecord = async (req) => {
     let token = req.get("authorization");
     var decoded = jwt_decode(token);
     userId = decoded.user_id;
-    //console.log(JSON.stringify(decoded))
-    // console.log(propertyRecord)
     var countryId = 0;
     var currencyId = 0;
     var cityId = 0;
     var localityId = 0;
     var propertyId = 0;
     let countryExists = false;
-    console.log(JSON.stringify(req.body))
     propertyRecord = req.body;
     countryExists =  await getExists("country","country_name",propertyRecord.country)
 
     if(!countryExists){
-        console.log("Came Here 1")
         let insertVal =  await insertOne("country",propertyRecord.country)
         if(insertVal === "false") throw Error("Error in Adding Country")
         else countryId = insertVal
@@ -183,10 +175,7 @@ insertRecord = async (req) => {
         cityId = cityExists
     }
     
-    // console.log("Came Here 2")
-    
     let localityExists =  await getExists("locality","location_name",propertyRecord.location)
-    // console.log("Locality : "+localityExists)
 
     if(!localityExists){
 
@@ -242,9 +231,7 @@ insertRecord = async (req) => {
             if(propertyRecord.files.length != 0){
                 for(let i = 0; i < propertyRecord.files.length; i++){
                     data = {"property_id":propertyId, "photo":propertyRecord.files[i]}
-                    // console.log("data: "+JSON.stringify(data))
                     let photoploaded = await insertOne("photo",data)
-                    // console.log("Photoooo: "+photoploaded)
                     if(photoploaded !== "false") counter++
                 }
                 if(counter == 0)
@@ -271,11 +258,9 @@ recommended = async (req) => {
     let token = req.get("authorization");
     var decoded = jwt_decode(token);
     userCity = decoded.location;
-    console.log("User_city " + userCity)
     return new Promise(async (resolve,reject) => {
         let sql = 'SELECT * FROM property WHERE location_id in (select location_id from locality where city_id in (select city_id from city where city_name = (?)))'
         await con.query(sql,userCity,async(err,result)=>{
-            console.log(err)
             if(result.length != 0){ 
                 result = JSON.stringify(result);
                 result = JSON.parse(result)
@@ -319,9 +304,7 @@ updateRecord = async (req) => {
         let authorized = false
         propertyRecord = req.body;
         propUserId = await getPropertyById(propertyRecord.property_id)
-        console.log("user id :"+userId)
         if(userId == propUserId){
-            console.log("in equal")
             authorized = true;
         }
         else{
@@ -338,9 +321,7 @@ updateRecord = async (req) => {
 
             if('country' in propertyRecord && 'city' in propertyRecord && 'location' in propertyRecord && 'pin' in propertyRecord){
                 countryExists =  await getExists("country","country_name",propertyRecord.country)
-                console.log(countryExists)
                 if(!countryExists){
-                    console.log("Came Here 1")
                     let insertVal =  await insertOne("country",propertyRecord.country)
                     if(insertVal === "false") throw Error("Error in Adding Country")
                     else countryId = insertVal
@@ -406,14 +387,10 @@ updateRecord = async (req) => {
             check = 'description' in propertyRecord;
             if(check){
                 data['description'] = propertyRecord.description;
-            } 
-            console.log(data);
+            }
             const query = "Update property SET " + Object.keys(data).map(key => `${key} = ?`).join(", ") + " WHERE property_id = ?"
-            console.log(query);
             const parameters = [...Object.values(data),propertyRecord.property_id];
-            console.log(parameters)
             await con.query(query,parameters,(err,result)=>{
-                console.log(JSON.stringify(err))
                 if(result === undefined){
                     reject("Error in updating")
                 }else{
@@ -439,7 +416,6 @@ deleteRecord = async (req) => {
         propertyRecord = req.body
         userId = decoded.user_id;
         let authorized = false
-        console.log("propertyRecord"+JSON.stringify(propertyRecord))
         propUserId = await getPropertyById(propertyRecord.property_id)
         if(userId == propUserId){
             authorized = true;
@@ -473,7 +449,6 @@ exports.search= async (req) => {
     var data =[]
     return new Promise(async (resolve,reject) => {
         let sql = 'SELECT * FROM property '
-        console.log(city)
         if(city !== undefined){
             sql+='WHERE location_id in (SELECT location_id FROM locality WHERE city_id in (SELECT city_id FROM city WHERE city_name = (?)))'
             data.push(city);
@@ -507,7 +482,6 @@ exports.search= async (req) => {
             data.push(pricedown);
         }
         await con.query(sql,data,(err,result)=>{
-            console.log(err)
             if(result !== undefined &&result.length != 0) resolve(result)
             else reject('No properties in your city')
         })
