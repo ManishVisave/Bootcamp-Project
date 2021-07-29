@@ -13,8 +13,8 @@ spec:
         app: user
     spec:
       containers:
-      - name: tomcat
-        image: tomcat:9.0
+      - name: user
+        image: 731152596599.dkr.ecr.ap-south-1.amazonaws.com/user:latest
         ports:
         - containerPort: 8081
         env:
