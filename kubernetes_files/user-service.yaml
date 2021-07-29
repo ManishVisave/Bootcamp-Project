@@ -7,6 +7,6 @@ spec:
   selector:
     app: user
   ports:
-    - nodePort: 31479
+    - nodePort: 31480
       port: 8082
       targetPort: 8081
