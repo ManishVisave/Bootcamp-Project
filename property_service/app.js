@@ -39,7 +39,9 @@ app.get("/",(req,res)=>{
 })*/
 app.post("/add",multipartMiddleware,checkToken,async (req,res)=>{
   let array = []
+  console.log(req.files)
   for(let i = 0; i < req.files.file.length; i++){
+    console.log(req.files.file[i])
     let val =await uploader.upload(req.files.file[i])
     array.push(val)
   }
@@ -58,6 +60,7 @@ app.post("/update",checkToken ,async (req,res)=>{
 })
 
 app.get('/recommend',checkToken,async (req,res) =>{
+  console.log(req)
   await db.recommended(req).then(result =>{
     res.json(result)
   }).catch(err=>res.json(err))
@@ -79,12 +82,14 @@ app.delete('/delete', checkToken ,async (req,res) => {
 })
 
 app.get('/search',async (req ,res) => {
+  console.log(req.query)
   await find.search(req).then(result => {
     res.json(result)
   }).catch(err => res.json(err))
 })
 
 app.get('/convert' , async(req ,res) => {
+  //console.log(req.query)
   await find.currency_convert().then(result => {
     res.json(result)
   }).catch(err => res.json(err))
