@@ -11,7 +11,3 @@ spec:
       protocol: TCP
       port: 8888
       targetPort: 8888
-    - name: user
-      protocol: TCP
-      port: 8081
-      targetPort: 8081

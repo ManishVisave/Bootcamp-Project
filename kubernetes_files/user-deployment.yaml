@@ -12,66 +12,7 @@ spec:
       labels:
         greeting: Property
     spec:
-      containers:
-        - name: property
-          image: "731152596599.dkr.ecr.ap-south-1.amazonaws.com/property:latest"
-          ports:
-            - containerPort: 8888
-          env:
-            - name: "DB_PORT"
-                valueFrom:
-                  secretKeyRef:
-                    name: envs
-                    key: DB_PORT
-
-            - name: "DB_PASSWORD"
-              valueFrom:
-                secretKeyRef:
-                  name: envs
-                  key: DB_PASSWORD
-
-            - name: "DB_USER"
-                valueFrom:
-                  secretKeyRef:
-                    name: envs
-                    key: DB_USER
-
-            - name: "CURRENCY_API_KEY"
-                valueFrom:
-                  secretKeyRef:
-                    name: envs
-                    key: CURRENCY_API_KEY
-
-            - name: "AWS_ACCESS_KEY_ID"
-                valueFrom:
-                  secretKeyRef:
-                    name: envs
-                    key: AWS_ACCESS_KEY_ID
-
-            - name: "DB_HOST"
-                valueFrom:
-                  secretKeyRef:
-                    name: envs
-                    key: DB_HOST
-
-            - name: "DB_DATABASE"
-                valueFrom:
-                  secretKeyRef:
-                    name: envs
-                    key: DB_DATABASE
-
-            - name: "AWS_SECRET_ACCESS_KEY"
-                valueFrom:
-                  secretKeyRef:
-                    name: envs
-                    key: AWS_SECRET_ACCESS_KEY
-            
-            - name: "AWS_DEFAULT_REGION"
-                valueFrom:
-                  secretKeyRef:
-                    name: envs
-                    key: AWS_DEFAULT_REGION
-                    
+      containers:             
         - name: user
           image: "731152596599.dkr.ecr.ap-south-1.amazonaws.com/user:latest"
           ports:
