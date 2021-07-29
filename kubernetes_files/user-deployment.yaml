@@ -1,24 +1,22 @@
-apiVersion: apps/v1
+apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: property
-  labels:
-    app: property
+  name: user
 spec:
   selector:
     matchLabels:
-      greeting: property
+      app: user
   replicas: 3
   template:
     metadata:
       labels:
-        greeting: Property
+        app: user
     spec:
       containers:
-      - name: user
-        image: "731152596599.dkr.ecr.ap-south-1.amazonaws.com/user:latest"
+      - name: tomcat
+        image: tomcat:9.0
         ports:
-          - containerPort: 8888
+        - containerPort: 8081
         env:
         - name: "DB_PORT"
           valueFrom:
