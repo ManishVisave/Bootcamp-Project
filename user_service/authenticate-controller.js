@@ -24,11 +24,13 @@ module.exports.authenticate=function(req,res){
                   });
               }else{           
                 var token=jwt.sign(JSON.parse(JSON.stringify(results[0])),"qwe1234",{
-                  expiresIn:5000
+                  expiresIn:'24h'
               });         
                   res.json({
-                      status:true,
+                      status:200,
                       token :token,
+                      message:"sucessful login",
+                      statusType:'success'
                       
                   })
               }
@@ -43,3 +45,4 @@ module.exports.authenticate=function(req,res){
       }
     });
 }
+

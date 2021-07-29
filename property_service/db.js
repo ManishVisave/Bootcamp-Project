@@ -1,15 +1,17 @@
-
-
 const mysql = require('mysql')
-const currency = require('./test.js')
 const jwt_decode =require('jwt-decode');
 
 var con = mysql.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    port: process.env.DB_PORT,
-    database: process.env.DB_DATABASE
+    // host: process.env.DB_HOST,
+    // user: process.env.DB_USER,
+    // password: process.env.DB_PASSWORD,
+    // port: process.env.DB_PORT,
+    // database: process.env.DB_DATABASE
+    host : "propertydb.cidwwfie3bwp.ap-south-1.rds.amazonaws.com",
+    user : "test",
+    password: "testingproperty",
+    port: 3306,
+    database: "property"
 });
 
 con.connect((err) => {
@@ -210,14 +212,14 @@ insertRecord = async (req) => {
     // console.log("Location Id: "+JSON.stringify(localityId))
     // console.log("Currency Id: "+JSON.stringify(currencyId))
 
-    let exchange= 1
-    let price = parseFloat(propertyRecord.price)
-    if(propertyRecord.currency !== "INR"){
-        exchange = await currency.currencyExchange(propertyRecord.currency,"INR")
-    }
-    price = price*exchange
+    // let exchange= 1
+    // let price = parseFloat(propertyRecord.price)
+    // if(propertyRecord.currency !== "INR"){
+    //     exchange = await currency.currencyExchange(propertyRecord.currency,"INR")
+    // }
+    // price = price*exchange
 
-    console.log("Exchange: "+exchange)
+    // console.log("Exchange: "+exchange)
     data = {
         "location_id":localityId,
         "address":propertyRecord.address,
@@ -225,7 +227,7 @@ insertRecord = async (req) => {
         "length":propertyRecord.length,
         "breadth":propertyRecord.breadth,
         "area": parseInt(propertyRecord.length, 10)*parseInt(propertyRecord.breadth, 10),
-        "price":price,
+        "price":parseFloat(propertyRecord.price),
         "description": propertyRecord.description,
         "user_id":userId
     }    
@@ -250,6 +252,7 @@ insertRecord = async (req) => {
                 else if(counter < propertyRecord.files.length)
                     return "Some Photos Not Uploaded"
                 else
+
                     resolve("Property Added.....")
             }
             else{
@@ -322,7 +325,7 @@ updateRecord = async (req) => {
             authorized = true;
         }
         else{
-
+            
             reject( "User not authorised to update")
         }
         if(authorized){
@@ -458,9 +461,68 @@ deleteRecord = async (req) => {
     })
 }
 
+
+exports.search= async (req) => {
+    var city = req.query.city ;
+    var pin = req.query.pincode ;
+    var location = req.query.location;
+    var areaup = req.query.areaup;
+    var areadown = req.query.areadown;
+    var pricedown = req.query.pricedown;
+    var priceup = req.query.priceup;
+    var data =[]
+    return new Promise(async (resolve,reject) => {
+        let sql = 'SELECT * FROM property '
+        console.log(city)
+        if(city !== undefined){
+            sql+='WHERE location_id in (SELECT location_id FROM locality WHERE city_id in (SELECT city_id FROM city WHERE city_name = (?)))'
+            data.push(city);
+        }else if(pin !== undefined){
+            sql+='WHERE location_id in (SELECT location_id FROM locality WHERE location_pin = (?)) '
+            data.push(pin);
+        }else{
+            sql+='WHERE location_id in (SELECT location_id FROM locality WHERE location_name = (?)) '
+            data.push(location) ;
+        }
+        if(areadown !== undefined && areaup !== undefined){
+            sql+= 'AND area >= ? AND area < ?'
+            data.push(areaup);
+            data.push(areadown);
+        }else if(areadown == undefined && areaup !== undefined){
+            sql += 'AND area > ?'
+            data.push(areaup);
+        }else if(areadown !== undefined && areaup == undefined){
+            sql += 'AND area <= ?'
+            data.push(areadown);
+        }
+        if(pricedown !== undefined && priceup !== undefined){
+            sql+= 'AND price >= ? AND price < ?'
+            data.push(priceup);
+            data.push(pricedown);
+        }else if(pricedown == undefined && priceup !== undefined){
+            sql += 'AND price > ?'
+            data.push(priceup);
+        }else if(pricedown !== undefined && priceup == undefined){
+            sql += 'AND price <= ?'
+            data.push(pricedown);
+        }
+        await con.query(sql,data,(err,result)=>{
+            console.log(err)
+            if(result !== undefined &&result.length != 0) resolve(result)
+            else reject('No properties in your city')
+        })
+    })
+}
+
+
 exports.con = con;
 exports.retriveData = getAllData;
 exports.insertRecord = insertRecord
 exports.deleteRecord = deleteRecord
 exports.recommended = recommended
 exports.updateRecord = updateRecord
+
+
+
+
+
