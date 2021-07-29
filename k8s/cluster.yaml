@@ -3,7 +3,7 @@ kind: ClusterConfig
 
 metadata:
   name: property-cluster #cluster name
-  region: us-east-2 #desired region
+  region: ap-south-1 #desired region
 
 nodeGroups:
   - name: property-node #cluster node group name

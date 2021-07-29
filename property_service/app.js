@@ -22,21 +22,6 @@ app.get("/",(req,res)=>{
   res.send("Server Listening.....")
 })
 
-/*app.post("/add",multipartMiddleware,async (req,res)=>{
-  let array = []
-  //console.log(JSON.stringify(req.files))
-  if(req.files != undefined){
-    console.log(JSON.stringify(req.files))
-    for(let i = 0; i < req.files.file.length; i++){
-      array.push(await uploader.upload(req.files.file[i]))
-    }
-  }
-  req.body.files = array
-  // console.log("Array: "+array.length)
-  await db.insertRecord(req).then(result => {
-    res.json('Record added')
-  }).catch(err=>console.log(err))
-})*/
 app.post("/add",multipartMiddleware,checkToken,async (req,res)=>{
   let array = []
   console.log(req.files)
