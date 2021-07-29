@@ -11,6 +11,9 @@ RUN npm install mysql
 RUN npm install bcryptjs 
 RUN npm install jwt-decode 
 RUN npm install pincode
+RUN npm install mocha 
+RUN npm install chai
+RUN npm install chai-http
 
 
 RUN mkdir src
