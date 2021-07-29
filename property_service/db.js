@@ -1,5 +1,4 @@
-const mysql = require('mysql')
-const currency = require('./property_test.js')
+const mysql = require('mysql');
 const jwt_decode =require('jwt-decode');
 
 var con = mysql.createConnection({
@@ -240,7 +239,7 @@ insertRecord = async (req) => {
         propertyId = insertVal
         counter = 0
         return new Promise(async (resolve,reject) => {
-            if(propertyRecord.files.length != 0){
+            if(propertyRecord.files !== undefined && propertyRecord.files.length != 0){
                 for(let i = 0; i < propertyRecord.files.length; i++){
                     data = {"property_id":propertyId, "photo":propertyRecord.files[i]}
                     // console.log("data: "+JSON.stringify(data))

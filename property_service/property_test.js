@@ -1,7 +1,7 @@
 const axios = require('axios');
 
 const config = {
-  headers: { Authorization:'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo4LCJuYW1lIjoia3VuYWwiLCJlbWFpbCI6Imt1bmFsQHYuY29tIiwicGFzc3dvcmQiOiIkMmEkMDgkL1BRVlRRT0UyMTJRM3hKSDBtMk5HLmpFV1B2SGFwTmRlb2htbkZxWkQyd3VQei9JUGZuY1MiLCJtb2JpbGUiOiIxMjM0NTY3ODg5Iiwid2hhdHNhcHAiOiIxMjMzNDU2Nzg5IiwibG9jYXRpb24iOiJrb2xrYXRhIiwiaWF0IjoxNjI3NTU3NzE3LCJleHAiOjE2Mjc2NDQxMTd9.ah0oKs0ZRTjN3t_6FVrZ6Qv8vzFlZAxre7Iny10PTzs'}
+  headers: { Authorization:'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo5LCJuYW1lIjoibWFuaXNoaCIsImVtYWlsIjoibWFuaXNoaEBvLmNvbSIsInBhc3N3b3JkIjoiJDJhJDA4JDk0TW1nOGhtTTJ6TWF3UU9IVjdPTU9VbDdZWS9MaGVHOEE2N242U25hdkxhMEdDSnhlTy5xIiwibW9iaWxlIjoiMTIzNDU2Nzg4OSIsIndoYXRzYXBwIjoiMTIzMzQ1Njc4OSIsImxvY2F0aW9uIjoicHVuZSIsImlhdCI6MTYyNzU3NDAwNiwiZXhwIjoxNjI3NjYwNDA2fQ.8dCIZQu3zh1blY_QkzIeod7vACVnjxUsSTuerEJsXGc'}
 };
 
 
@@ -48,7 +48,7 @@ function makePostRequest() {
       .then(function (response) {
         //console.log(response);
         if(response.data.status == true){
-            console.log('passed : property-update-test1 ')
+            console.log('passed : update-test1 ')
         }
       },config)
       .catch(function (error) {
@@ -59,14 +59,14 @@ function makePostRequest() {
 
       axios.get('http://127.0.0.1:8888/recommend',config)
       .then(function (response) {
-        console.log(response);
+        //console.log(response);
         if(response.data.status == true){
             console.log('passed : reccomend-test1 ')
         }
         
       })
       .catch(function (error) {
-        console.log(error);
+        //console.log(error);
         console.log('failed : reccomend-test1 ')
       });
 
@@ -86,7 +86,7 @@ function makePostRequest() {
 
       //delete
       axios.delete('http://127.0.0.1:8888/delete' ,{
-        property_id:95
+        property_id:87
       },config)
       .then(function (response) {
         //console.log(response);
@@ -115,7 +115,6 @@ function makePostRequest() {
       //search 
       axios.get('http://127.0.0.1:8888/search' ,{
         city:'mumbai',
-        pincode: 411043,
         location:'dhankwadi',
         areaup :'500',
         priceup :100
