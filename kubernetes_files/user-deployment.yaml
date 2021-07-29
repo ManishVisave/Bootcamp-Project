@@ -15,10 +15,10 @@ spec:
         greeting: Property
     spec:
       containers:
-      - name: property
-        image: "731152596599.dkr.ecr.ap-south-1.amazonaws.com/property:latest"
+      - name: user
+        image: "731152596599.dkr.ecr.ap-south-1.amazonaws.com/user:latest"
         ports:
-        - containerPort: 8888
+          - containerPort: 8888
         env:
         - name: "DB_PORT"
           valueFrom:
