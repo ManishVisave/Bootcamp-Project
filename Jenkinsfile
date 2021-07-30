@@ -3,10 +3,7 @@ pipeline {
   stages {
     stage('Pulling From Github'){
       steps {
-        // git branch: 'main', credentialsId: 'Github', url: 'https://github.com/ManishVisave/Bootcamp-Project'
-    
-        sh 'sudo cp /home/ec2-user/Bootcamp-Project/  . '
-        sh 'sudo cd Bootcamp-Project/ && sudo git pull'
+        git branch: 'main', credentialsId: 'ssh-key', url: 'git@github.com:ManishVisave/Bootcamp-Project.git'
       }
     }
     stage('Building Property Service Image') {
