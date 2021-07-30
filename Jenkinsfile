@@ -3,7 +3,7 @@ pipeline {
   stages {
     stage('Pulling From Github'){
       steps {
-        sh 'git clone https://github.com/ManishVisave/Bootcamp-Project.git' 
+        git branch: 'main', credentialsId: 'Github', url: 'https://github.com/ManishVisave/Bootcamp-Project'
       }
     }
     stage('Building Property Service Image') {
