@@ -38,6 +38,22 @@ async function getExists(table,searchColName,searchData){
     })
 
 }
+async function getCityByLocationId(searchId){
+    let val = new Promise(async (resolve,reject)=>{
+        await con.query("SELECT city_name FROM city WHERE city_id=(SELECT city_id from locality where location_id=(?))",searchId,(err,result)=>{
+            if(result != undefined && result.length != 0){
+                resolve(result[0]['city_name'])
+            }else{
+                reject(false)
+            }
+        })
+    })
+    return val.then((res)=>{
+        return res;
+    }).catch((err) => {
+        return err;
+    })
+}
 
 async function getLocationById(searchId){
     let val = new Promise(async (resolve,reject)=>{
@@ -118,9 +134,12 @@ getAllData = async () =>{
                   //console.log(rows)
                 for(let i=0;i<rows.length;i++){
                     var location = rows[i]['location_id']
+
+                    
                     delete rows[i]['location_id']
                     rows[i]['location'] =  await getLocationById(location);
 
+                    rows[i]['city_name'] = await getCityByLocationId(location)
                     var user_id = rows[i]['user_id']
                     delete rows[i]['user_id']
                     rows[i]['posted by'] =  await getUserById(user_id)
@@ -301,7 +320,8 @@ recommended = async (req) => {
                     var location = result[i]['location_id']
                     delete result[i]['location_id']
                     result[i]['location'] =  await getLocationById(location);
-
+                    result[i]['city_name'] = await getCityByLocationId(location)
+                    
                     var user_id = result[i]['user_id']
                     delete result[i]['user_id']
                     result[i]['posted by'] =  await getUserById(user_id)
@@ -518,8 +538,26 @@ exports.search= async (req) => {
             sql += 'AND price <= ?'
             data.push(pricedown);
         }
-        await con.query(sql,data,(err,result)=>{
-            if(result !== undefined &&result.length != 0) resolve(result)
+        await con.query(sql,data,async (err,result)=>{
+            if(result !== undefined &&result.length != 0) {
+                result = JSON.stringify(result);
+                result = JSON.parse(result)
+                
+                for(let i=0;i<result.length;i++){
+                    var location = result[i]['location_id']
+                    delete result[i]['location_id']
+                    result[i]['location'] =  await getLocationById(location);
+                    result[i]['city_name'] = await getCityByLocationId(location)
+                    
+                    var user_id = result[i]['user_id']
+                    delete result[i]['user_id']
+                    result[i]['posted by'] =  await getUserById(user_id)
+
+                    var currency_id = result[i]['currency_id']
+                    delete result[i]['currency_id']
+                    result[i]['price in '] =await getCurrencyById(currency_id)
+                }
+                resolve(result)}
             else reject('No properties in your city')
         })
     })
