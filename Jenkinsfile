@@ -26,12 +26,12 @@ pipeline {
       }
     }
 
-    // stage('ECR Push') {
-    //   steps { 
-    //     sh 'sudo docker push 731152596599.dkr.ecr.ap-south-1.amazonaws.com/user:latest'
-    //     sh 'sudo docker push 731152596599.dkr.ecr.ap-south-1.amazonaws.com/property:latest'
-    //   }
-    // }
+    stage('ECR Push') {
+      steps { 
+        sh 'sudo docker push 731152596599.dkr.ecr.ap-south-1.amazonaws.com/user:latest'
+        sh 'sudo docker push 731152596599.dkr.ecr.ap-south-1.amazonaws.com/property:latest'
+      }
+    }
 
 
 
