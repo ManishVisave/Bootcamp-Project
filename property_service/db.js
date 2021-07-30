@@ -56,6 +56,24 @@ async function getLocationById(searchId){
     })
 }
 
+async function getCurrencyById(searchId){
+    let val = new Promise(async (resolve,reject)=>{
+        await con.query("SELECT currency_name FROM currency WHERE currency_id=?",searchId,(err,result)=>{
+            if(result != undefined && result.length != 0){
+                resolve(result[0]['currency_name'])
+            }else{
+                reject(false)
+            }
+        })
+    })
+    return val.then((res)=>{
+        return res;
+    }).catch((err) => {
+        return err;
+    })
+}
+
+
 async function getUserById(searchId){
     let val = new Promise(async (resolve,reject)=>{
         await con.query("SELECT name,email,mobile FROM users WHERE user_id=?",searchId,(err,result)=>{
@@ -90,14 +108,27 @@ async function getPropertyById(searchId){
     })
 }
 
-getAllData = () =>{
-    return new Promise(function(resolve, reject){
+getAllData = async () =>{
+    return new Promise(async (resolve, reject) => {
       con.query(
-          "SELECT * FROM property",
-          (err, rows)=>{
+          "SELECT * FROM property",async (err, rows)=>{
               if(rows === undefined){
                   reject(new Error("Error rows is undefined"));
               }else{
+                  //console.log(rows)
+                for(let i=0;i<rows.length;i++){
+                    var location = rows[i]['location_id']
+                    delete rows[i]['location_id']
+                    rows[i]['location'] =  await getLocationById(location);
+
+                    var user_id = rows[i]['user_id']
+                    delete rows[i]['user_id']
+                    rows[i]['posted by'] =  await getUserById(user_id)
+
+                    var currency_id = rows[i]['currency_id']
+                    delete rows[i]['currency_id']
+                    rows[i]['price in '] =await getCurrencyById(currency_id)
+                }
                   resolve(rows);
               }
           }
@@ -169,7 +200,8 @@ insertRecord = async (req) => {
         let data = {"country_id" : countryId, "city_name": propertyRecord.city}
         
         let insertVal =  await insertOne("city",data)
-        if(insertVal === "false") throw Error("Error in Adding Country")
+        if(insertVal === "false") 
+        return 'Error in Adding City';
         else cityId = insertVal
     }else{
         cityId = cityExists
@@ -273,6 +305,10 @@ recommended = async (req) => {
                     var user_id = result[i]['user_id']
                     delete result[i]['user_id']
                     result[i]['posted by'] =  await getUserById(user_id)
+
+                    var currency_id = result[i]['currency_id']
+                    delete result[i]['currency_id']
+                    result[i]['price in '] =await getCurrencyById(currency_id)
                 }
                 resolve(result)}
             else reject("No properties in your city")

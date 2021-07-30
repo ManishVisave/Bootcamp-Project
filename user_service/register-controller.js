@@ -12,10 +12,32 @@ var bcrypt = require('bcryptjs');
     "location":"nagpur"   
 }
 */ 
+async function getuserByEmail(email){
 
-module.exports.register=function(req,res){
+  let val = new Promise(async (resolve,reject)=>{
+      await connection.query("SELECT user_id FROM users WHERE email=?",email,(err,result)=>{
+        console.log(err)
+          if(result != undefined && result.length != 0){
+            
+              resolve(true)
+          }else{
+              reject(false)
+          }
+      })
+  })
+  return val.then((res)=>{
+      return true;
+  }).catch((err) => {
+      return false;
+  })
+}
+
+
+module.exports.register=async function(req,res){
   var today = new Date();
-  
+  var emailExists = await getuserByEmail(req.body.email);
+  console.log(emailExists);
+  if(!emailExists ){
   var users={
     "name" :req.body.name,
     "email" :req.body.email,
@@ -33,9 +55,19 @@ module.exports.register=function(req,res){
     }else{
         res.json({
           status:true,
-          data:results,
+         
           message:'user registered sucessfully'
       })
     }
   });
+}
+else{
+  
+    res.json({
+      status:false,
+     
+      message:'email already Exists !!'
+  
+})
+}
 }

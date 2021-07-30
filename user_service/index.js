@@ -16,11 +16,11 @@ var changeController = require('./change-controller');
 var detailsController = require('./details-controller');
 
 //route to handle login ,registration , delete user and change password  
-app.post('/api/register',registerController.register);
-app.post('/api/authenticate',authenticateController.authenticate);
-app.post('/api/delete',checkToken,deleteController.delete);
-app.post('/api/change',checkToken,changeController.change);
-app.get('/api/details',checkToken,detailsController.details);
+app.post('/user/register',registerController.register);
+app.post('/user/authenticate',authenticateController.authenticate);
+app.delete('/user/delete',checkToken,deleteController.delete);
+app.post('/user/change',checkToken,changeController.change);
+app.get('/user/details',checkToken,detailsController.details);
 
 app.listen(8081, () =>console.log('Server Running on 8081'));
 

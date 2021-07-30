@@ -21,12 +21,12 @@ app.get("/",(req,res)=>{
   res.send("Server Listening.....")
 })
 
-app.post("/add",multipartMiddleware,checkToken,async (req,res)=>{
+app.post("/property/add",multipartMiddleware,checkToken,async (req,res)=>{
   let array = []
-  console.log(req.files)
+  //console.log(req.files)
   if(req.files !== undefined){
   for(let i = 0; i < req.files.file.length; i++){
-    console.log(req.files.file[i])
+   // console.log(req.files.file[i])
     let val =await uploader.upload(req.files.file[i])
     array.push(val)
   }
@@ -42,7 +42,7 @@ app.post("/add",multipartMiddleware,checkToken,async (req,res)=>{
     })
   }).catch(err=>console.log(err))
 })
-app.post("/update",checkToken ,async (req,res)=>{
+app.post("/property/update",checkToken ,async (req,res)=>{
   
   await db.updateRecord(req).then(result => {
     //res.json(result)
@@ -57,8 +57,8 @@ app.post("/update",checkToken ,async (req,res)=>{
   }))
 })
 
-app.get('/recommend',checkToken,async (req,res) =>{
-  console.log(req)
+app.get('/property/recommend',checkToken,async (req,res) =>{
+  //console.log(req)
   await db.recommended(req).then(result =>{
     //res.json(result)
     res.json({
@@ -74,7 +74,7 @@ app.get('/recommend',checkToken,async (req,res) =>{
   });*/
 })
 
-app.get("/getAll",async (req,res)=>{
+app.get("/property/getAll",async (req,res)=>{
   await db.retriveData().then(result => {
     //res.json(result)
     res.json({
@@ -87,7 +87,7 @@ app.get("/getAll",async (req,res)=>{
 }))
 })
 
-app.delete('/delete', checkToken ,async (req,res) => {
+app.delete('/property/delete', checkToken ,async (req,res) => {
   await db.deleteRecord(req).then(result => {
     //res.json(result)
     res.json({
@@ -100,8 +100,8 @@ app.delete('/delete', checkToken ,async (req,res) => {
 }))
 })
 
-app.get('/search',async (req ,res) => {
-  console.log(req.query)
+app.get('/property/search',async (req ,res) => {
+  //console.log(req.query)
   
   await db.search(req).then(result => {
     //res.json(result)
@@ -115,7 +115,7 @@ app.get('/search',async (req ,res) => {
 }))
 })
 
-app.get('/convert' , async(req ,res) => {
+app.get('/property/convert' , async(req ,res) => {
   //console.log(req.query)
   await find.currency_convert().then(result => {
     //res.json(result)
