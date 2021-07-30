@@ -34,11 +34,11 @@ pipeline {
       }
     }
 
-    stage('Deploying') {
-      steps { 
-        sh 'kubectl --kubeconfig=/home/.kube/config -f kubernetes_files/'
-      }
-    }
+    // stage('Deploying') {
+    //   steps { 
+    //     sh 'kubectl --kubeconfig=/home/.kube/config -f kubernetes_files/'
+    //   }
+    // }
 
     
 
