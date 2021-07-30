@@ -36,7 +36,7 @@ pipeline {
 
     stage('Deploying') {
       steps { 
-        sh 'kubectl apply -f kubernetes_files/'
+        sh 'kubectl --kubeconfig=/home/.kube/config -f kubernetes_files/'
       }
     }
 
