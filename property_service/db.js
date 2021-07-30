@@ -355,7 +355,8 @@ updateRecord = async (req) => {
             let countryExists = false;
             var data = {};
 
-            if('country' in propertyRecord && 'city' in propertyRecord && 'location' in propertyRecord && 'pin' in propertyRecord){
+            if('address' in propertyRecord && country in propertyRecord && 'city' in propertyRecord && 'location' in propertyRecord && 'pin' in propertyRecord){
+                data['address'] = propertyRecord.address
                 countryExists =  await getExists("country","country_name",propertyRecord.country)
                 if(!countryExists){
                     let insertVal =  await insertOne("country",propertyRecord.country)
