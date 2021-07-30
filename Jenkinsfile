@@ -34,6 +34,14 @@ pipeline {
       }
     }
 
+    stage('Deploying') {
+      steps { 
+        sh 'kubectl apply -f kubernetes_files/'
+      }
+    }
+
+    
+
 
 
   }
