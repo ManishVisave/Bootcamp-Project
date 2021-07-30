@@ -10,8 +10,8 @@ pipeline {
       steps { 
         // sh 'admin  ALL=(ALL) NOPASSWD:ALL'
         //sh 'aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 731152596599.dkr.ecr.ap-south-1.amazonaws.com'
-        sh 'sudo docker build -t property_service property_service/'
-        sh 'sudo docker tag property_service:latest 731152596599.dkr.ecr.ap-south-1.amazonaws.com/property:latest'
+        sh 'docker build -t property_service property_service/'
+        sh 'docker tag property_service:latest 731152596599.dkr.ecr.ap-south-1.amazonaws.com/property:latest'
       }
     }
 
@@ -20,8 +20,8 @@ pipeline {
         
         // sh '%admin  ALL=(ALL) NOPASSWD:ALL'
         //sh 'aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 731152596599.dkr.ecr.ap-south-1.amazonaws.com'
-        sh 'sudo docker build -t user_service user_service/'
-        sh 'sudo docker tag user_service:latest 731152596599.dkr.ecr.ap-south-1.amazonaws.com/user:latest'
+        sh 'docker build -t user_service user_service/'
+        sh 'docker tag user_service:latest 731152596599.dkr.ecr.ap-south-1.amazonaws.com/user:latest'
       }
     }
 
