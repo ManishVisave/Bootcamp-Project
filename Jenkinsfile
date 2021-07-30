@@ -28,7 +28,7 @@ pipeline {
 
     stage('ECR Push') {
       steps { 
-        sh 'sudo aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 731152596599.dkr.ecr.ap-south-1.amazonaws.com'
+        sh 'sudo aws ecr get-login-password --region ap-south-1 | sudo docker login --username AWS --password-stdin 731152596599.dkr.ecr.ap-south-1.amazonaws.com'
         sh 'sudo docker push 731152596599.dkr.ecr.ap-south-1.amazonaws.com/user:latest'
         sh 'sudo docker push 731152596599.dkr.ecr.ap-south-1.amazonaws.com/property:latest'
       }
